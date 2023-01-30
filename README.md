@@ -1,2 +1,2 @@
 # helm-api
-API web server for installing and uninstalling helm chart
+Rest API Web Server to manage the install and uninstall of Hel Charts
