@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "demo.fullname" . }}
+  name: {{ include "helm-api.fullname" . }}
   labels:
-    {{- include "demo.labels" . | nindent 4 }}
+    {{- include "helm-api.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "demo.selectorLabels" . | nindent 6 }}
+      {{- include "helm-api.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,15 +18,22 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "demo.selectorLabels" . | nindent 8 }}
+        {{- include "helm-api.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "demo.serviceAccountName" . }}
+      serviceAccountName: {{ include "helm-api.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.volumeMount.create}}
+      volumes:
+        - name: {{ .Chart.Name }}-nfs-charts
+          nfs:
+            server: {{ .Values.volumeMount.nfsIP }} 
+            path: {{ .Values.volumeMount.nfsPath }} 
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -35,8 +42,20 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
+          {{- if .Values.volumeMount.create}}
+          volumeMounts:
+            - mountPath: /go/bin/charts
+              name: {{ .Chart.Name }}-nfs-charts
+          {{- end }}
+          env:
+            - name: WEB_IP
+              value: "{{ .Values.WebServer.listenOn }}"
+            - name: WEB_PORT
+              value: "{{ .Values.WebServer.port }}"
+            - name: WEB_CONFIG_PATH
+              value: ""
           livenessProbe:
             httpGet:
               path: /

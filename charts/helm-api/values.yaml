@@ -1,18 +1,30 @@
-# Default values for demo.
+# Default values for helm-api.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: nginx
-  pullPolicy: IfNotPresent
+  repository: helm-api
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v1.0.0"
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+#Set the container env values
+WebServer:
+  listenOn: "0.0.0.0"
+  port: "8080"
+
+#volume mount
+volumeMount:
+  # Create the volume mount
+  create: false
+  nfsIP: ""
+  nfsPath: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

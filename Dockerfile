@@ -8,9 +8,9 @@ FROM golang:alpine AS builder
 # Git is required for fetching the dependencies.
 
 WORKDIR $GOPATH/src/mypackage/
-COPY . ./cimpex
+COPY . ./helm-api
 
-WORKDIR $GOPATH/src/mypackage/cimpex/
+WORKDIR $GOPATH/src/mypackage/helm-api/
 # Fetch dependencies.
 # Using go get.
 RUN apk update \                                                                                                                                                                                                                        
@@ -22,7 +22,8 @@ RUN go get -d -v
 # Build the binary.
 RUN CGO_ENABLED=0  GOARCH=386 GOOS=linux go build -o /go/bin/helm-api
 RUN cd /go/bin/
-RUN mkdir /go/bin/charts
+RUN mkdir /charts
+RUN mkdir /go/bin/kubeconfig
 WORKDIR /go/bin/
 
 ############################
@@ -38,8 +39,14 @@ EXPOSE 8000
 
 VOLUME [ "/go/bin/charts" ]
 
-ENV BASE_FOLDER=/go/bin/charts
+LABEL version="1.0.0"
+LABEL name="helm-api"
+LABEL maintainer="Andrew Pye"
+LABEL description="Helm-api is a CLI application written in Golang that gives the ability to perform Install, Uninstall and Upgrade of Helm Charts via Rest API endpoint."
+
+ENV BASE_FOLDER=/charts
 ENV WEB_IP=localhost
 ENV WEB_PORT=8080
+ENV WEB_CONFIG_PATH=/go/bin/kubeconfig/
 
 ENTRYPOINT ["/go/bin/helm-api","web"]

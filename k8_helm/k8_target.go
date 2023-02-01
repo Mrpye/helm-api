@@ -1,4 +1,4 @@
-package helm
+package k8_helm
 
 import (
 	"fmt"

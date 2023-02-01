@@ -1,4 +1,4 @@
-package helm
+package k8_helm
 
 import (
 	"context"
@@ -92,7 +92,11 @@ func (m *K8) buildRestConfig() (*rest.Config, error) {
 		home := homedir.HomeDir()
 		kube_config = path.Join(home, ".kube", "config") // flag.String("kubeconfig", path.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
-		kube_config = m.ConfigPath //flag.String("kubeconfig", m.ConfigPath, "absolute path to the kubeconfig file")
+		if strings.HasSuffix(m.ConfigPath, "/") {
+			kube_config = path.Join(m.ConfigPath, "config") //flag.String("kubeconfig", m.ConfigPath, "absolute path to the kubeconfig file")
+		} else {
+			kube_config = m.ConfigPath
+		}
 	}
 	flag.Parse()
 
@@ -195,6 +199,57 @@ func (m *K8) DeployHelmChart(chart_path string, release_name string, namespace s
 
 	// install the chart here
 	rel, err := client.Run(chart, configs)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Info: Installed Chart from path: %s in namespace: %s\n", rel.Name, rel.Namespace)
+	// this will confirm the values set during installation
+	//log.Println(rel.Config)
+	return nil
+}
+
+func (m *K8) UpgradeHelmChart(chart_path string, release_name string, namespace string, configs map[string]interface{}) error {
+
+	chartPath := chart_path
+	nameSpace := "default"
+	if namespace != "" {
+		nameSpace = namespace
+	}
+
+	releaseName := release_name
+	log.Printf("Info: Updating Chart from path: %s in namespace: %s\n", release_name, nameSpace)
+	settings := cli.New()
+
+	actionConfig := new(action.Configuration)
+
+	config, err := m.buildRestConfig()
+	if err != nil {
+		return err
+	}
+	getter := NewRESTClientGetter(nameSpace, *config)
+	// You can pass an empty string instead of settings.Namespace() to list
+	// all namespaces
+	if err := actionConfig.Init(getter, nameSpace,
+		os.Getenv("HELM_DRIVER"), log.Printf); err != nil {
+		return err
+	}
+
+	client := action.NewUpgrade(actionConfig)
+	client.Namespace = nameSpace
+
+	ch_path, err := client.LocateChart(chartPath, settings)
+	if err != nil {
+		return err
+	}
+	// load chart from the path
+	chart, err := loader.Load(ch_path)
+	if err != nil {
+		return err
+	}
+
+	// install the chart here
+	rel, err := client.Run(releaseName, chart, configs)
 	if err != nil {
 		return err
 	}

@@ -1,0 +1,216 @@
+basePath: /
+definitions:
+  lib.GetServiceIP:
+    properties:
+      namespace:
+        type: string
+      release_name:
+        type: string
+    type: object
+  lib.ImportChartRepo:
+    properties:
+      repo:
+        type: string
+      repo_name:
+        type: string
+    type: object
+  lib.InstallUpgradeRequest:
+    properties:
+      chart:
+        type: string
+      config:
+        additionalProperties: true
+        type: object
+      namespace:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+      release_name:
+        type: string
+    type: object
+  lib.NamespaceChartRepo:
+    properties:
+      namespace:
+        type: string
+    type: object
+  lib.ServiceDetails:
+    properties:
+      ip:
+        type: string
+      port:
+        type: integer
+      service_name:
+        type: string
+      service_type:
+        type: string
+    type: object
+  lib.UninstallChartRepo:
+    properties:
+      namespace:
+        type: string
+      release_name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    url: https://github.com/Mrpye/helm-api
+  description: Helm-api is a CLI application written in Golang that gives the ability
+    to perform Install, Uninstall and Upgrade Helm Charts via Rest API endpoint. The
+    application can be run as a stand alone application or deployed as a Container.
+    Also for convenience there is the  ability to create namespaces and retrieve service
+    IPs of the deployed application. GitHub repository at https://github.com/Mrpye/helm-api
+  license:
+    name: Apache 2.0 licensed
+    url: https://github.com/Mrpye/helm-api/blob/main/LICENSE
+  title: helm-api
+  version: "1.0"
+paths:
+  /:
+    get:
+      operationId: check-api-endpoint
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Check API Endpoint
+  /add_repo:
+    post:
+      operationId: add-helm-chart-repo
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/lib.ImportChartRepo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: charts Repo Added
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: add a helm chart repo
+  /create_ns:
+    post:
+      operationId: create-namespace
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/lib.NamespaceChartRepo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: namespace created
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: Create Namespace
+  /get_ip:
+    post:
+      operationId: get-service-ip
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/lib.GetServiceIP'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/lib.ServiceDetails'
+            type: array
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: Get Service IP
+  /install:
+    post:
+      operationId: install-helm-chart
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/lib.InstallUpgradeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: chart installed
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: Install a helm chart
+  /uninstall:
+    post:
+      operationId: uninstall-helm-chart
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/lib.UninstallChartRepo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: chart uninstalled
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: uninstall a helm chart
+  /upgrade:
+    post:
+      operationId: upgrade-helm-chart
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/lib.InstallUpgradeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: chart upgraded
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: Upgrade a helm chart
+swagger: "2.0"

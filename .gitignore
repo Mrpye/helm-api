@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *.tar.gz
+*.tgz
 *.tar
 *.zip
 *.sh
