@@ -1,4 +1,4 @@
-package lib
+package body_types
 
 type InstallUpgradeRequest struct {
 	Chart       string                 `json:"chart"`
@@ -32,4 +32,10 @@ type ServiceDetails struct {
 	ServiceType string `json:"service_type" yaml:"service_type"`
 	IP          string `json:"ip" yaml:"ip"`
 	Port        int32  `json:"port" yaml:"port"`
+}
+
+type GetPayload struct {
+	ConfigName string            `json:"config"`
+	AnswerFile string            `json:"answer_file"`
+	Params     map[string]string `json:"params"`
 }

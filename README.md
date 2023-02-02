@@ -16,6 +16,17 @@ Helm-api is a CLI application written in Golang that gives the ability to perfor
 * Git if you wish to clone helm-api project
 * Swag to update swagger document [https://github.com/swaggo/swag/cmd/swag](https://github.com/swaggo/swag/cmd/swag) 
 
+## Project folders
+Below is a description helm-api project folders and what they contain
+|   Folder        | Description  | 
+|-----------|---|
+| charts    | Contains the helm chart for helm-api  |
+| docs      | Contains the swagger documents |
+| documents | Contains cli and api markdown files  |
+| modules   | Contains helm-api modules and code  |
+| config    | Contains Example payload config files  |
+| cmd       | Contains code for helm-api CLI   |
+|           |   |
 
 ## Installation and Basic usage
 This will take you through the steps to install and get helm-api up and running.
@@ -294,6 +305,110 @@ curl --location --request POST 'localhost:8080/addrepo' \
 
 - repo (url to the chart repo)
 - repo_name (name for the chart repo)
+
+</details>
+
+<details>
+<summary>Get Helm Config from a GitLab repo</summary>
+
+``` bash
+curl --location --request POST 'localhost:8080/get_config' \
+--header 'Authorization: Bearer 9ksddaS7B-Yp45kix-' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "config":"https://gitlab.com//api/v4/projects/3/repository/files/helm-api-0.1.0.json/raw?ref=main",
+    "answer_file":"https://gitlab.com//api/v4/projects/3/repository/files/helm-api-0.1.0-answer-qa.json/raw?ref=main"
+   
+}'
+```
+
+## Payload
+
+- config (name of the config.json file)
+- answer_file (name of the answer.json file)
+
+</details>
+
+<details>
+<summary>Get Helm Config from a GitLab repo and answer file from local repo</summary>
+
+``` bash
+curl --location --request POST 'localhost:8080/get_config' \
+--header 'Authorization: Bearer 9ksddaS7B-Yp45kix-' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "config":"https://gitlab.com//api/v4/projects/3/repository/files/helm-api-0.1.0.json/raw?ref=main",
+    "answer_file":"helm-api-0.1.0-answer-qa"
+}'
+```
+
+## Payload
+
+- config (name of the config.json file)
+- answer_file (name of the answer.json file)
+
+</details>
+
+<details>
+<summary>Get Helm Config from a GitHub repo</summary>
+
+``` bash
+curl --location --request POST 'localhost:8080/get_config' \
+--header 'Authorization: Bearer 9ksddaS7B-Yp45kix-' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "config":"https://api.github.com/repos/Mrpye/helm-api/contents/helm-api-0.1.0.json",
+    "answer_file":"https://api.github.com/repos/Mrpye/helm-api/contents/helm-api-0.1.0-answer-qa.json"
+   
+}'
+```
+
+## Payload
+
+- config (name of the config.json file)
+- answer_file (name of the answer.json file)
+
+</details>
+
+<details>
+<summary>Get Helm Config and Answer from local folder</summary>
+
+``` bash
+curl --location --request POST 'localhost:8080/get_config' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "config":"helm-api-0.1.0",
+    "answer_file":"helm-api-0.1.0-answer-qa"
+}'
+```
+
+## Payload
+
+- config (name of the config.json file)
+- answer_file (name of the answer.json file)
+
+</details>
+
+<details>
+<summary>Get Helm Config from local folder and pass params</summary>
+
+``` bash
+curl --location --request POST 'localhost:8080/get_config' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "config":"helm-api-0.1.0",
+    "params":{
+        "nfsIP": "172.16.20.10",
+        "nfsPath": "/data/nfs/Bifrostv2/charts/",
+        "repo": "172.19.2.15"
+    }
+}'
+```
+
+## Payload
+
+- config (name of the config.json file)
+- params (params to pass to the config)
 
 </details>
 

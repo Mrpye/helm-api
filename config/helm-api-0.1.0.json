@@ -1,0 +1,22 @@
+{
+    "chart":"charts/helm-api-0.1.0.tgz",
+    "release_name":"helm-api-install",
+    "namespace":"default",
+    "params":{
+        "repo":"",
+        "nfsIP":"",
+        "nfsPath":""
+    },
+    "config":{
+        "image":{
+            "repository": "{{.Params.repo}}/library/helm-api",
+            "tag": "v1.0.0",
+            "pullPolicy":"Always"
+        },
+        "volumeMount":{
+            "create": true,
+            "nfsIP":"{{.Params.nfsIP}}",
+            "nfsPath":"{{.Params.nfsPath}}"
+        }
+    }
+}

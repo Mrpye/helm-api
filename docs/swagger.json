@@ -46,7 +46,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.ImportChartRepo"
+                            "$ref": "#/definitions/body_types.ImportChartRepo"
                         }
                     }
                 ],
@@ -80,7 +80,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.NamespaceChartRepo"
+                            "$ref": "#/definitions/body_types.NamespaceChartRepo"
                         }
                     }
                 ],
@@ -89,6 +89,43 @@
                         "description": "namespace created",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_config": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get the config for helm chart",
+                "operationId": "get-helm-chart-config",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body_types.GetPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/body_types.InstallUpgradeRequest"
+                            }
                         }
                     },
                     "404": {
@@ -114,7 +151,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.GetServiceIP"
+                            "$ref": "#/definitions/body_types.GetServiceIP"
                         }
                     }
                 ],
@@ -124,7 +161,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/lib.ServiceDetails"
+                                "$ref": "#/definitions/body_types.ServiceDetails"
                             }
                         }
                     },
@@ -151,7 +188,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.InstallUpgradeRequest"
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
                         }
                     }
                 ],
@@ -185,7 +222,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.UninstallChartRepo"
+                            "$ref": "#/definitions/body_types.UninstallChartRepo"
                         }
                     }
                 ],
@@ -219,7 +256,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.InstallUpgradeRequest"
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
                         }
                     }
                 ],
@@ -241,7 +278,24 @@
         }
     },
     "definitions": {
-        "lib.GetServiceIP": {
+        "body_types.GetPayload": {
+            "type": "object",
+            "properties": {
+                "answer_file": {
+                    "type": "string"
+                },
+                "config": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "body_types.GetServiceIP": {
             "type": "object",
             "properties": {
                 "namespace": {
@@ -252,7 +306,7 @@
                 }
             }
         },
-        "lib.ImportChartRepo": {
+        "body_types.ImportChartRepo": {
             "type": "object",
             "properties": {
                 "repo": {
@@ -263,7 +317,7 @@
                 }
             }
         },
-        "lib.InstallUpgradeRequest": {
+        "body_types.InstallUpgradeRequest": {
             "type": "object",
             "properties": {
                 "chart": {
@@ -287,7 +341,7 @@
                 }
             }
         },
-        "lib.NamespaceChartRepo": {
+        "body_types.NamespaceChartRepo": {
             "type": "object",
             "properties": {
                 "namespace": {
@@ -295,7 +349,7 @@
                 }
             }
         },
-        "lib.ServiceDetails": {
+        "body_types.ServiceDetails": {
             "type": "object",
             "properties": {
                 "ip": {
@@ -312,7 +366,7 @@
                 }
             }
         },
-        "lib.UninstallChartRepo": {
+        "body_types.UninstallChartRepo": {
             "type": "object",
             "properties": {
                 "namespace": {

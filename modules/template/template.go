@@ -5,10 +5,11 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Mrpye/helm-api/lib"
+	"github.com/Mrpye/golib/lib"
+	"github.com/Mrpye/helm-api/modules/body_types"
 )
 
-func ParseInterfaceMap(model lib.InstallUpgradeRequest, val map[string]interface{}) (map[string]interface{}, error) {
+func ParseInterfaceMap(model body_types.InstallUpgradeRequest, val map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	for k, v := range val {
 		_ = k
@@ -26,14 +27,14 @@ func ParseInterfaceMap(model lib.InstallUpgradeRequest, val map[string]interface
 	return val, err
 }
 
-func ParseTemplate(model lib.InstallUpgradeRequest, tpl string) (string, error) {
+func ParseTemplate(model body_types.InstallUpgradeRequest, tpl string) (string, error) {
 	//*********************
 	//Create a function map
 	//*********************
 	funcMap := template.FuncMap{
 		"base64enc":   lib.Base64EncString,
 		"base64dec":   lib.Base64DecString,
-		"gzip_base64": lib.GzipBase64,
+		"gzip_base64": lib.GzipBase64String,
 		"lc":          strings.ToLower,
 		"uc":          strings.ToUpper,
 		"domain":      lib.GetDomainOrIP,
@@ -42,7 +43,7 @@ func ParseTemplate(model lib.InstallUpgradeRequest, tpl string) (string, error) 
 		"clean":       lib.Clean,
 		"concat":      lib.Concat,
 		"replace":     strings.ReplaceAll,
-		"contains":    lib.StringContainsStringListItem,
+		"contains":    lib.CommaListContainsString,
 		"not":         lib.NOT,
 		"or":          lib.OR,
 		"and":         lib.AND,

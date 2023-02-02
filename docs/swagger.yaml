@@ -1,20 +1,31 @@
 basePath: /
 definitions:
-  lib.GetServiceIP:
+  body_types.GetPayload:
+    properties:
+      answer_file:
+        type: string
+      config:
+        type: string
+      params:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  body_types.GetServiceIP:
     properties:
       namespace:
         type: string
       release_name:
         type: string
     type: object
-  lib.ImportChartRepo:
+  body_types.ImportChartRepo:
     properties:
       repo:
         type: string
       repo_name:
         type: string
     type: object
-  lib.InstallUpgradeRequest:
+  body_types.InstallUpgradeRequest:
     properties:
       chart:
         type: string
@@ -30,12 +41,12 @@ definitions:
       release_name:
         type: string
     type: object
-  lib.NamespaceChartRepo:
+  body_types.NamespaceChartRepo:
     properties:
       namespace:
         type: string
     type: object
-  lib.ServiceDetails:
+  body_types.ServiceDetails:
     properties:
       ip:
         type: string
@@ -46,7 +57,7 @@ definitions:
       service_type:
         type: string
     type: object
-  lib.UninstallChartRepo:
+  body_types.UninstallChartRepo:
     properties:
       namespace:
         type: string
@@ -88,7 +99,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/lib.ImportChartRepo'
+          $ref: '#/definitions/body_types.ImportChartRepo'
       produces:
       - application/json
       responses:
@@ -110,7 +121,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/lib.NamespaceChartRepo'
+          $ref: '#/definitions/body_types.NamespaceChartRepo'
       produces:
       - application/json
       responses:
@@ -123,6 +134,30 @@ paths:
           schema:
             type: string
       summary: Create Namespace
+  /get_config:
+    post:
+      operationId: get-helm-chart-config
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/body_types.GetPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/body_types.InstallUpgradeRequest'
+            type: array
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: get the config for helm chart
   /get_ip:
     post:
       operationId: get-service-ip
@@ -132,7 +167,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/lib.GetServiceIP'
+          $ref: '#/definitions/body_types.GetServiceIP'
       produces:
       - application/json
       responses:
@@ -140,7 +175,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/lib.ServiceDetails'
+              $ref: '#/definitions/body_types.ServiceDetails'
             type: array
         "404":
           description: error
@@ -156,7 +191,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/lib.InstallUpgradeRequest'
+          $ref: '#/definitions/body_types.InstallUpgradeRequest'
       produces:
       - application/json
       responses:
@@ -178,7 +213,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/lib.UninstallChartRepo'
+          $ref: '#/definitions/body_types.UninstallChartRepo'
       produces:
       - application/json
       responses:
@@ -200,7 +235,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/lib.InstallUpgradeRequest'
+          $ref: '#/definitions/body_types.InstallUpgradeRequest'
       produces:
       - application/json
       responses:
