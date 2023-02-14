@@ -191,6 +191,7 @@ func (m *K8) DeployHelmChart(chart_path string, release_name string, namespace s
 	if err != nil {
 		return err
 	}
+
 	// load chart from the path
 	chart, err := loader.Load(ch_path)
 	if err != nil {
@@ -293,7 +294,6 @@ func (m *K8) RepoAdd(name string, url string, user string, password string) erro
 	}
 
 	if f.Has(name) {
-
 		return fmt.Errorf("repository name (%s) already exists", name)
 	}
 

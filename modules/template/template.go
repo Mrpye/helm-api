@@ -56,6 +56,8 @@ func ParseTemplate(model body_types.InstallUpgradeRequest, tpl string) (string, 
 	//*****************
 	//Pase the template
 	//*****************
+	tpl = strings.ReplaceAll(tpl, "<%", "{{")
+	tpl = strings.ReplaceAll(tpl, "%>", "}}")
 	tmpl, err := template.New("CodeRun").Funcs(funcMap).Parse(tpl)
 	if err != nil {
 		return "", err

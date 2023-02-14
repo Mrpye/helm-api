@@ -40,6 +40,8 @@ Helm-api is a CLI application written in Golang that gives the ability to perfor
 | GET | / | [check api endpoint](#check-api-endpoint) | Check API Endpoint |
 | POST | /create_ns | [create namespace](#create-namespace) | Create Namespace |
 | POST | /get_config | [get helm chart config](#get-helm-chart-config) | get the config for helm chart |
+| POST | /get_config_install | [get helm chart config install](#get-helm-chart-config-install) | get the config for helm chart and installs |
+| POST | /get_config_upgrade | [get helm chart config upgrade](#get-helm-chart-config-upgrade) | get the config for helm chart and installs |
 | POST | /get_ip | [get service ip](#get-service-ip) | Get Service IP |
 | POST | /install | [install helm chart](#install-helm-chart) | Install a helm chart |
 | POST | /uninstall | [uninstall helm chart](#uninstall-helm-chart) | uninstall a helm chart |
@@ -190,12 +192,96 @@ Status: OK
    
   
 
-[][BodyTypesInstallUpgradeRequest](#body-types-install-upgrade-request)
+[BodyTypesInstallUpgradeRequest](#body-types-install-upgrade-request)
 
 ##### <span id="get-helm-chart-config-404"></span> 404 - error
 Status: Not Found
 
 ###### <span id="get-helm-chart-config-404-schema"></span> Schema
+   
+  
+
+
+
+### <span id="get-helm-chart-config-install"></span> get the config for helm chart and installs (*get-helm-chart-config-install*)
+
+```
+POST /get_config_install
+```
+
+#### Produces
+  * application/json
+
+#### Parameters
+
+| Name | Source | Type | Go type | Separator | Required | Default | Description |
+|------|--------|------|---------|-----------| :------: |---------|-------------|
+| request | `body` | [BodyTypesGetPayload](#body-types-get-payload) | `models.BodyTypesGetPayload` | | ✓ | | query params |
+
+#### All responses
+| Code | Status | Description | Has headers | Schema |
+|------|--------|-------------|:-----------:|--------|
+| [200](#get-helm-chart-config-install-200) | OK | OK |  | [schema](#get-helm-chart-config-install-200-schema) |
+| [404](#get-helm-chart-config-install-404) | Not Found | error |  | [schema](#get-helm-chart-config-install-404-schema) |
+
+#### Responses
+
+
+##### <span id="get-helm-chart-config-install-200"></span> 200 - OK
+Status: OK
+
+###### <span id="get-helm-chart-config-install-200-schema"></span> Schema
+   
+  
+
+[BodyTypesInstallUpgradeRequest](#body-types-install-upgrade-request)
+
+##### <span id="get-helm-chart-config-install-404"></span> 404 - error
+Status: Not Found
+
+###### <span id="get-helm-chart-config-install-404-schema"></span> Schema
+   
+  
+
+
+
+### <span id="get-helm-chart-config-upgrade"></span> get the config for helm chart and installs (*get-helm-chart-config-upgrade*)
+
+```
+POST /get_config_upgrade
+```
+
+#### Produces
+  * application/json
+
+#### Parameters
+
+| Name | Source | Type | Go type | Separator | Required | Default | Description |
+|------|--------|------|---------|-----------| :------: |---------|-------------|
+| request | `body` | [BodyTypesGetPayload](#body-types-get-payload) | `models.BodyTypesGetPayload` | | ✓ | | query params |
+
+#### All responses
+| Code | Status | Description | Has headers | Schema |
+|------|--------|-------------|:-----------:|--------|
+| [200](#get-helm-chart-config-upgrade-200) | OK | chart installed |  | [schema](#get-helm-chart-config-upgrade-200-schema) |
+| [404](#get-helm-chart-config-upgrade-404) | Not Found | error |  | [schema](#get-helm-chart-config-upgrade-404-schema) |
+
+#### Responses
+
+
+##### <span id="get-helm-chart-config-upgrade-200"></span> 200 - chart installed
+Status: OK
+
+###### <span id="get-helm-chart-config-upgrade-200-schema"></span> Schema
+   
+  
+
+
+
+##### <span id="get-helm-chart-config-upgrade-404"></span> 404 - error
+Status: Not Found
+
+###### <span id="get-helm-chart-config-upgrade-404-schema"></span> Schema
    
   
 
@@ -384,7 +470,9 @@ Status: Not Found
 |------|------|---------|:--------:| ------- |-------------|---------|
 | answer_file | string| `string` |  | |  |  |
 | config | string| `string` |  | |  |  |
+| namespace | string| `string` |  | |  |  |
 | params | map of string| `map[string]string` |  | |  |  |
+| release_name | string| `string` |  | |  |  |
 
 
 

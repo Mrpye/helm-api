@@ -35,7 +35,9 @@ type ServiceDetails struct {
 }
 
 type GetPayload struct {
-	ConfigName string            `json:"config"`
-	AnswerFile string            `json:"answer_file"`
-	Params     map[string]string `json:"params"`
+	ConfigName  string            `json:"config"`
+	AnswerFile  string            `json:"answer_file"`
+	ReleaseName string            `json:"release_name"`
+	Namespace   string            `json:"namespace"`
+	Params      map[string]string `json:"params"`
 }

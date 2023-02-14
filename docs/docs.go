@@ -128,10 +128,75 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/body_types.InstallUpgradeRequest"
-                            }
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
+                        }
+                    },
+                    "404": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_config_install": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get the config for helm chart and installs",
+                "operationId": "get-helm-chart-config-install",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body_types.GetPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
+                        }
+                    },
+                    "404": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_config_upgrade": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get the config for helm chart and installs",
+                "operationId": "get-helm-chart-config-upgrade",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body_types.GetPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "chart installed",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "404": {
@@ -293,11 +358,17 @@ const docTemplate = `{
                 "config": {
                     "type": "string"
                 },
+                "namespace": {
+                    "type": "string"
+                },
                 "params": {
                     "type": "object",
                     "additionalProperties": {
                         "type": "string"
                     }
+                },
+                "release_name": {
+                    "type": "string"
                 }
             }
         },

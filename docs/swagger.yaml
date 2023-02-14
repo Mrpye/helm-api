@@ -6,10 +6,14 @@ definitions:
         type: string
       config:
         type: string
+      namespace:
+        type: string
       params:
         additionalProperties:
           type: string
         type: object
+      release_name:
+        type: string
     type: object
   body_types.GetServiceIP:
     properties:
@@ -150,14 +154,56 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/body_types.InstallUpgradeRequest'
-            type: array
+            $ref: '#/definitions/body_types.InstallUpgradeRequest'
         "404":
           description: error
           schema:
             type: string
       summary: get the config for helm chart
+  /get_config_install:
+    post:
+      operationId: get-helm-chart-config-install
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/body_types.GetPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/body_types.InstallUpgradeRequest'
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: get the config for helm chart and installs
+  /get_config_upgrade:
+    post:
+      operationId: get-helm-chart-config-upgrade
+      parameters:
+      - description: query params
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/body_types.GetPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: chart installed
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+      summary: get the config for helm chart and installs
   /get_ip:
     post:
       operationId: get-service-ip

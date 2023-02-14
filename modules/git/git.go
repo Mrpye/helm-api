@@ -54,7 +54,7 @@ func downloadGitFile(url string, token string) (string, error) {
 	}
 }
 
-func LoadHelmConfig(config_path string, answer_path string, params map[string]string, token string) (*body_types.InstallUpgradeRequest, error) {
+func LoadHelmConfig(config_path string, answer_path string, params map[string]string, release_name string, namespace string, token string) (*body_types.InstallUpgradeRequest, error) {
 	//**************************
 	//Load the answer file first
 	//**************************
@@ -84,7 +84,7 @@ func LoadHelmConfig(config_path string, answer_path string, params map[string]st
 	//Load the config file next
 	//*************************
 	if strings.HasPrefix(config_path, "http") {
-		data, err = downloadGitFile(answer_path, token)
+		data, err = downloadGitFile(config_path, token)
 		if err != nil {
 			return nil, err
 		}
@@ -98,6 +98,12 @@ func LoadHelmConfig(config_path string, answer_path string, params map[string]st
 	json.Unmarshal([]byte(data), &obj)
 	if params != nil {
 		obj.Params = params
+	}
+	if release_name != "" {
+		obj.ReleaseName = release_name
+	}
+	if namespace != "" {
+		obj.Namespace = namespace
 	}
 	return &obj, nil
 }

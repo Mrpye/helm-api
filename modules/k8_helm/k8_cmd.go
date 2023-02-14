@@ -570,7 +570,7 @@ func (m *K8) CreateNS(ns string) error {
 		return err
 	}
 	if strings.ToLower(ns) == "default" {
-		return errors.New("cannot delete default name space")
+		return errors.New("cannot create default name space")
 	}
 	ctx := context.Background()
 

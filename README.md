@@ -90,7 +90,7 @@ sudo docker build . -t  helm-api:v1.0.0 -f Dockerfile
 <details>
 <summary>3. Run the container</summary>
 
-This will run the helm-api container and expose the API endpoint on port 8080 and map the local char folder to the container so that helm-api can access the local charts.
+This will run the helm-api container and expose the API endpoint on port 8080 and map the local chart folder to the container so that helm-api can access the local charts.
 ```
 sudo docker run -d -p 8080:8080 --name=helm-api -v /host_path/charts:/go/bin/charts  --env=WEB_IP=0.0.0.0 -t helm-api:1.0.0
 ```
@@ -292,7 +292,7 @@ http://localhost:8080/docs/index.html
 <summary>Add chart repo</summary>
 
 ``` bash
-curl --location --request POST 'localhost:8080/addrepo' \
+curl --location --request POST 'localhost:8080/add_repo' \
 --header 'Authorization: Basic YWRtaW46cGFzc3dvcmQ=' \
 --header 'Content-Type: application/json' \
 --data-raw '{
