@@ -22,7 +22,8 @@ RUN go get -d -v
 # Build the binary.
 RUN CGO_ENABLED=0  GOARCH=386 GOOS=linux go build -o /go/bin/helm-api
 RUN cd /go/bin/
-RUN mkdir /charts
+RUN mkdir /go/bin/charts
+RUN mkdir /go/bin/config
 RUN mkdir /go/bin/kubeconfig
 WORKDIR /go/bin/
 

@@ -39,6 +39,9 @@ Helm-api is a CLI application written in Golang that gives the ability to perfor
 | POST | /add_repo | [add helm chart repo](#add-helm-chart-repo) | add a helm chart repo |
 | GET | / | [check api endpoint](#check-api-endpoint) | Check API Endpoint |
 | POST | /create_ns | [create namespace](#create-namespace) | Create Namespace |
+| POST | /get_config | [get helm chart config](#get-helm-chart-config) | get the config for helm chart |
+| POST | /get_config_install | [get helm chart config install](#get-helm-chart-config-install) | get the config for helm chart and installs |
+| POST | /get_config_upgrade | [get helm chart config upgrade](#get-helm-chart-config-upgrade) | get the config for helm chart and installs |
 | POST | /get_ip | [get service ip](#get-service-ip) | Get Service IP |
 | POST | /install | [install helm chart](#install-helm-chart) | Install a helm chart |
 | POST | /uninstall | [uninstall helm chart](#uninstall-helm-chart) | uninstall a helm chart |
@@ -61,7 +64,7 @@ POST /add_repo
 
 | Name | Source | Type | Go type | Separator | Required | Default | Description |
 |------|--------|------|---------|-----------| :------: |---------|-------------|
-| request | `body` | [LibImportChartRepo](#lib-import-chart-repo) | `models.LibImportChartRepo` | | ✓ | | query params |
+| request | `body` | [BodyTypesImportChartRepo](#body-types-import-chart-repo) | `models.BodyTypesImportChartRepo` | | ✓ | | query params |
 
 #### All responses
 | Code | Status | Description | Has headers | Schema |
@@ -129,7 +132,7 @@ POST /create_ns
 
 | Name | Source | Type | Go type | Separator | Required | Default | Description |
 |------|--------|------|---------|-----------| :------: |---------|-------------|
-| request | `body` | [LibNamespaceChartRepo](#lib-namespace-chart-repo) | `models.LibNamespaceChartRepo` | | ✓ | | query params |
+| request | `body` | [BodyTypesNamespaceChartRepo](#body-types-namespace-chart-repo) | `models.BodyTypesNamespaceChartRepo` | | ✓ | | query params |
 
 #### All responses
 | Code | Status | Description | Has headers | Schema |
@@ -158,6 +161,132 @@ Status: Not Found
 
 
 
+### <span id="get-helm-chart-config"></span> get the config for helm chart (*get-helm-chart-config*)
+
+```
+POST /get_config
+```
+
+#### Produces
+  * application/json
+
+#### Parameters
+
+| Name | Source | Type | Go type | Separator | Required | Default | Description |
+|------|--------|------|---------|-----------| :------: |---------|-------------|
+| request | `body` | [BodyTypesGetPayload](#body-types-get-payload) | `models.BodyTypesGetPayload` | | ✓ | | query params |
+
+#### All responses
+| Code | Status | Description | Has headers | Schema |
+|------|--------|-------------|:-----------:|--------|
+| [200](#get-helm-chart-config-200) | OK | OK |  | [schema](#get-helm-chart-config-200-schema) |
+| [404](#get-helm-chart-config-404) | Not Found | error |  | [schema](#get-helm-chart-config-404-schema) |
+
+#### Responses
+
+
+##### <span id="get-helm-chart-config-200"></span> 200 - OK
+Status: OK
+
+###### <span id="get-helm-chart-config-200-schema"></span> Schema
+   
+  
+
+[BodyTypesInstallUpgradeRequest](#body-types-install-upgrade-request)
+
+##### <span id="get-helm-chart-config-404"></span> 404 - error
+Status: Not Found
+
+###### <span id="get-helm-chart-config-404-schema"></span> Schema
+   
+  
+
+
+
+### <span id="get-helm-chart-config-install"></span> get the config for helm chart and installs (*get-helm-chart-config-install*)
+
+```
+POST /get_config_install
+```
+
+#### Produces
+  * application/json
+
+#### Parameters
+
+| Name | Source | Type | Go type | Separator | Required | Default | Description |
+|------|--------|------|---------|-----------| :------: |---------|-------------|
+| request | `body` | [BodyTypesGetPayload](#body-types-get-payload) | `models.BodyTypesGetPayload` | | ✓ | | query params |
+
+#### All responses
+| Code | Status | Description | Has headers | Schema |
+|------|--------|-------------|:-----------:|--------|
+| [200](#get-helm-chart-config-install-200) | OK | OK |  | [schema](#get-helm-chart-config-install-200-schema) |
+| [404](#get-helm-chart-config-install-404) | Not Found | error |  | [schema](#get-helm-chart-config-install-404-schema) |
+
+#### Responses
+
+
+##### <span id="get-helm-chart-config-install-200"></span> 200 - OK
+Status: OK
+
+###### <span id="get-helm-chart-config-install-200-schema"></span> Schema
+   
+  
+
+[BodyTypesInstallUpgradeRequest](#body-types-install-upgrade-request)
+
+##### <span id="get-helm-chart-config-install-404"></span> 404 - error
+Status: Not Found
+
+###### <span id="get-helm-chart-config-install-404-schema"></span> Schema
+   
+  
+
+
+
+### <span id="get-helm-chart-config-upgrade"></span> get the config for helm chart and installs (*get-helm-chart-config-upgrade*)
+
+```
+POST /get_config_upgrade
+```
+
+#### Produces
+  * application/json
+
+#### Parameters
+
+| Name | Source | Type | Go type | Separator | Required | Default | Description |
+|------|--------|------|---------|-----------| :------: |---------|-------------|
+| request | `body` | [BodyTypesGetPayload](#body-types-get-payload) | `models.BodyTypesGetPayload` | | ✓ | | query params |
+
+#### All responses
+| Code | Status | Description | Has headers | Schema |
+|------|--------|-------------|:-----------:|--------|
+| [200](#get-helm-chart-config-upgrade-200) | OK | chart installed |  | [schema](#get-helm-chart-config-upgrade-200-schema) |
+| [404](#get-helm-chart-config-upgrade-404) | Not Found | error |  | [schema](#get-helm-chart-config-upgrade-404-schema) |
+
+#### Responses
+
+
+##### <span id="get-helm-chart-config-upgrade-200"></span> 200 - chart installed
+Status: OK
+
+###### <span id="get-helm-chart-config-upgrade-200-schema"></span> Schema
+   
+  
+
+
+
+##### <span id="get-helm-chart-config-upgrade-404"></span> 404 - error
+Status: Not Found
+
+###### <span id="get-helm-chart-config-upgrade-404-schema"></span> Schema
+   
+  
+
+
+
 ### <span id="get-service-ip"></span> Get Service IP (*get-service-ip*)
 
 ```
@@ -171,7 +300,7 @@ POST /get_ip
 
 | Name | Source | Type | Go type | Separator | Required | Default | Description |
 |------|--------|------|---------|-----------| :------: |---------|-------------|
-| request | `body` | [LibGetServiceIP](#lib-get-service-ip) | `models.LibGetServiceIP` | | ✓ | | query params |
+| request | `body` | [BodyTypesGetServiceIP](#body-types-get-service-ip) | `models.BodyTypesGetServiceIP` | | ✓ | | query params |
 
 #### All responses
 | Code | Status | Description | Has headers | Schema |
@@ -189,7 +318,7 @@ Status: OK
    
   
 
-[][LibServiceDetails](#lib-service-details)
+[][BodyTypesServiceDetails](#body-types-service-details)
 
 ##### <span id="get-service-ip-404"></span> 404 - error
 Status: Not Found
@@ -213,7 +342,7 @@ POST /install
 
 | Name | Source | Type | Go type | Separator | Required | Default | Description |
 |------|--------|------|---------|-----------| :------: |---------|-------------|
-| request | `body` | [LibInstallUpgradeRequest](#lib-install-upgrade-request) | `models.LibInstallUpgradeRequest` | | ✓ | | query params |
+| request | `body` | [BodyTypesInstallUpgradeRequest](#body-types-install-upgrade-request) | `models.BodyTypesInstallUpgradeRequest` | | ✓ | | query params |
 
 #### All responses
 | Code | Status | Description | Has headers | Schema |
@@ -255,7 +384,7 @@ POST /uninstall
 
 | Name | Source | Type | Go type | Separator | Required | Default | Description |
 |------|--------|------|---------|-----------| :------: |---------|-------------|
-| request | `body` | [LibUninstallChartRepo](#lib-uninstall-chart-repo) | `models.LibUninstallChartRepo` | | ✓ | | query params |
+| request | `body` | [BodyTypesUninstallChartRepo](#body-types-uninstall-chart-repo) | `models.BodyTypesUninstallChartRepo` | | ✓ | | query params |
 
 #### All responses
 | Code | Status | Description | Has headers | Schema |
@@ -297,7 +426,7 @@ POST /upgrade
 
 | Name | Source | Type | Go type | Separator | Required | Default | Description |
 |------|--------|------|---------|-----------| :------: |---------|-------------|
-| request | `body` | [LibInstallUpgradeRequest](#lib-install-upgrade-request) | `models.LibInstallUpgradeRequest` | | ✓ | | query params |
+| request | `body` | [BodyTypesInstallUpgradeRequest](#body-types-install-upgrade-request) | `models.BodyTypesInstallUpgradeRequest` | | ✓ | | query params |
 
 #### All responses
 | Code | Status | Description | Has headers | Schema |
@@ -328,7 +457,26 @@ Status: Not Found
 
 ## Models
 
-### <span id="lib-get-service-ip"></span> lib.GetServiceIP
+### <span id="body-types-get-payload"></span> body_types.GetPayload
+
+
+  
+
+
+
+**Properties**
+
+| Name | Type | Go type | Required | Default | Description | Example |
+|------|------|---------|:--------:| ------- |-------------|---------|
+| answer_file | string| `string` |  | |  |  |
+| config | string| `string` |  | |  |  |
+| namespace | string| `string` |  | |  |  |
+| params | map of string| `map[string]string` |  | |  |  |
+| release_name | string| `string` |  | |  |  |
+
+
+
+### <span id="body-types-get-service-ip"></span> body_types.GetServiceIP
 
 
   
@@ -344,7 +492,7 @@ Status: Not Found
 
 
 
-### <span id="lib-import-chart-repo"></span> lib.ImportChartRepo
+### <span id="body-types-import-chart-repo"></span> body_types.ImportChartRepo
 
 
   
@@ -360,7 +508,7 @@ Status: Not Found
 
 
 
-### <span id="lib-install-upgrade-request"></span> lib.InstallUpgradeRequest
+### <span id="body-types-install-upgrade-request"></span> body_types.InstallUpgradeRequest
 
 
   
@@ -379,7 +527,7 @@ Status: Not Found
 
 
 
-### <span id="lib-namespace-chart-repo"></span> lib.NamespaceChartRepo
+### <span id="body-types-namespace-chart-repo"></span> body_types.NamespaceChartRepo
 
 
   
@@ -394,7 +542,7 @@ Status: Not Found
 
 
 
-### <span id="lib-service-details"></span> lib.ServiceDetails
+### <span id="body-types-service-details"></span> body_types.ServiceDetails
 
 
   
@@ -412,7 +560,7 @@ Status: Not Found
 
 
 
-### <span id="lib-uninstall-chart-repo"></span> lib.UninstallChartRepo
+### <span id="body-types-uninstall-chart-repo"></span> body_types.UninstallChartRepo
 
 
   

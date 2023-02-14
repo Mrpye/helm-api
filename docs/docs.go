@@ -52,7 +52,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.ImportChartRepo"
+                            "$ref": "#/definitions/body_types.ImportChartRepo"
                         }
                     }
                 ],
@@ -86,13 +86,115 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.NamespaceChartRepo"
+                            "$ref": "#/definitions/body_types.NamespaceChartRepo"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "namespace created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_config": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get the config for helm chart",
+                "operationId": "get-helm-chart-config",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body_types.GetPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
+                        }
+                    },
+                    "404": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_config_install": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get the config for helm chart and installs",
+                "operationId": "get-helm-chart-config-install",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body_types.GetPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
+                        }
+                    },
+                    "404": {
+                        "description": "error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_config_upgrade": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get the config for helm chart and installs",
+                "operationId": "get-helm-chart-config-upgrade",
+                "parameters": [
+                    {
+                        "description": "query params",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/body_types.GetPayload"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "chart installed",
                         "schema": {
                             "type": "string"
                         }
@@ -120,7 +222,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.GetServiceIP"
+                            "$ref": "#/definitions/body_types.GetServiceIP"
                         }
                     }
                 ],
@@ -130,7 +232,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/lib.ServiceDetails"
+                                "$ref": "#/definitions/body_types.ServiceDetails"
                             }
                         }
                     },
@@ -157,7 +259,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.InstallUpgradeRequest"
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
                         }
                     }
                 ],
@@ -191,7 +293,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.UninstallChartRepo"
+                            "$ref": "#/definitions/body_types.UninstallChartRepo"
                         }
                     }
                 ],
@@ -225,7 +327,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/lib.InstallUpgradeRequest"
+                            "$ref": "#/definitions/body_types.InstallUpgradeRequest"
                         }
                     }
                 ],
@@ -247,7 +349,30 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "lib.GetServiceIP": {
+        "body_types.GetPayload": {
+            "type": "object",
+            "properties": {
+                "answer_file": {
+                    "type": "string"
+                },
+                "config": {
+                    "type": "string"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "release_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "body_types.GetServiceIP": {
             "type": "object",
             "properties": {
                 "namespace": {
@@ -258,7 +383,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lib.ImportChartRepo": {
+        "body_types.ImportChartRepo": {
             "type": "object",
             "properties": {
                 "repo": {
@@ -269,7 +394,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lib.InstallUpgradeRequest": {
+        "body_types.InstallUpgradeRequest": {
             "type": "object",
             "properties": {
                 "chart": {
@@ -293,7 +418,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lib.NamespaceChartRepo": {
+        "body_types.NamespaceChartRepo": {
             "type": "object",
             "properties": {
                 "namespace": {
@@ -301,7 +426,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lib.ServiceDetails": {
+        "body_types.ServiceDetails": {
             "type": "object",
             "properties": {
                 "ip": {
@@ -318,7 +443,7 @@ const docTemplate = `{
                 }
             }
         },
-        "lib.UninstallChartRepo": {
+        "body_types.UninstallChartRepo": {
             "type": "object",
             "properties": {
                 "namespace": {

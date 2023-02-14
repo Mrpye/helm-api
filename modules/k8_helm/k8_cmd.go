@@ -10,7 +10,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Mrpye/helm-api/lib"
+	"github.com/Mrpye/golib/lib"
+	"github.com/Mrpye/helm-api/modules/body_types"
+
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -498,7 +500,7 @@ func (m *K8) GetDemonSet(ns string) (*appsv1.DaemonSetList, error) {
 	return pods, nil
 }
 
-func (m *K8) GetServiceIP(ns string, test string) ([]lib.ServiceDetails, error) {
+func (m *K8) GetServiceIP(ns string, test string) ([]body_types.ServiceDetails, error) {
 	//***************
 	//Load the Config
 	//***************
@@ -522,7 +524,7 @@ func (m *K8) GetServiceIP(ns string, test string) ([]lib.ServiceDetails, error) 
 		return nil, err
 	}
 
-	var ports []lib.ServiceDetails
+	var ports []body_types.ServiceDetails
 	for _, o := range services.Items {
 		if len(o.Status.LoadBalancer.Ingress) > 0 {
 			for _, i := range o.Status.LoadBalancer.Ingress {
@@ -530,10 +532,10 @@ func (m *K8) GetServiceIP(ns string, test string) ([]lib.ServiceDetails, error) 
 				if res {
 					if len(o.Spec.Ports) > 0 {
 
-						ports = append(ports, lib.ServiceDetails{ServiceType: "LoadBalancer", ServiceName: o.Name, IP: i.IP, Port: o.Spec.Ports[0].Port})
+						ports = append(ports, body_types.ServiceDetails{ServiceType: "LoadBalancer", ServiceName: o.Name, IP: i.IP, Port: o.Spec.Ports[0].Port})
 						log.Printf("Info: %s; %s:%v", o.Name, i.IP, o.Spec.Ports[0].Port)
 					} else {
-						ports = append(ports, lib.ServiceDetails{ServiceType: "LoadBalancer", ServiceName: o.Name, IP: i.IP})
+						ports = append(ports, body_types.ServiceDetails{ServiceType: "LoadBalancer", ServiceName: o.Name, IP: i.IP})
 						log.Printf("Info: %s; %s", o.Name, i.IP)
 					}
 
@@ -544,10 +546,10 @@ func (m *K8) GetServiceIP(ns string, test string) ([]lib.ServiceDetails, error) 
 				res, _ := regexp.MatchString(test, o.Name)
 				if res {
 					if len(o.Spec.Ports) > 0 {
-						ports = append(ports, lib.ServiceDetails{ServiceType: "ClusterIP", ServiceName: o.Name, IP: i, Port: o.Spec.Ports[0].Port})
+						ports = append(ports, body_types.ServiceDetails{ServiceType: "ClusterIP", ServiceName: o.Name, IP: i, Port: o.Spec.Ports[0].Port})
 						log.Printf("Info: %s; %s", o.Name, i)
 					} else {
-						ports = append(ports, lib.ServiceDetails{ServiceType: "ClusterIP", ServiceName: o.Name, IP: i})
+						ports = append(ports, body_types.ServiceDetails{ServiceType: "ClusterIP", ServiceName: o.Name, IP: i})
 						log.Printf("Info: %s; %s", o.Name, i)
 					}
 
@@ -568,7 +570,7 @@ func (m *K8) CreateNS(ns string) error {
 		return err
 	}
 	if strings.ToLower(ns) == "default" {
-		return errors.New("cannot delete default name space")
+		return errors.New("cannot create default name space")
 	}
 	ctx := context.Background()
 
