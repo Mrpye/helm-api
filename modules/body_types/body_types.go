@@ -6,6 +6,7 @@ type InstallUpgradeRequest struct {
 	Namespace   string                 `json:"namespace"`
 	Params      map[string]string      `json:"params"`
 	Config      map[string]interface{} `json:"config"`
+	Result      string                 `json:"result"`
 }
 
 type ImportChartRepo struct {
@@ -16,6 +17,7 @@ type ImportChartRepo struct {
 type UninstallChartRepo struct {
 	ReleaseName string `json:"release_name"`
 	Namespace   string `json:"namespace"`
+	Result      string `json:"result"`
 }
 
 type GetServiceIP struct {

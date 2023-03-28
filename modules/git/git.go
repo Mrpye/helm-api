@@ -5,18 +5,19 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Mrpye/golib/lib"
+	"github.com/Mrpye/golib/file"
+	"github.com/Mrpye/golib/net"
 	"github.com/Mrpye/helm-api/modules/body_types"
 )
 
 func DownloadFromGitLab(url string, token string) (string, error) {
 	//url := fmt.Sprintf("%s/api/v4/projects/%s/repository/files/%s?ref=%s", m.Host, project_data, File, branch)
-	headers := []lib.Header{
+	headers := []net.Header{
 		{Key: "Content-Type", Value: "application/json"},
 		{Key: "Accept", Value: "application/json"},
 		{Key: "PRIVATE-TOKEN", Value: token},
 	}
-	res, _, err := lib.CallApi(url, "GET", headers, nil, false)
+	res, _, err := net.CallApi(url, "GET", headers, nil, false)
 	if string(res) == "{\"message\":\"401 Unauthorized\"}" {
 		return string(res), errors.New("invalid auth token")
 	}
@@ -25,12 +26,12 @@ func DownloadFromGitLab(url string, token string) (string, error) {
 
 func DownloadFromGitHub(url string, token string) (string, error) {
 	//url := fmt.Sprintf("%s/api/v4/projects/%s/repository/files/%s?ref=%s", m.Host, project_data, File, branch)
-	headers := []lib.Header{
+	headers := []net.Header{
 		{Key: "Content-Type", Value: "application/json"},
 		{Key: "Accept", Value: "*/*"},
 		{Key: "Authorization", Value: token},
 	}
-	res, _, err := lib.CallApi(url, "GET", headers, nil, false)
+	res, _, err := net.CallApi(url, "GET", headers, nil, false)
 	return string(res), err
 }
 
@@ -69,8 +70,8 @@ func LoadHelmConfig(config_path string, answer_path string, params map[string]st
 			if err != nil {
 				return nil, err
 			}
-		} else if lib.FileExists(answer_path) {
-			data, err = lib.ReadFileToString(answer_path)
+		} else if file.FileExists(answer_path) {
+			data, err = file.ReadFileToString(answer_path)
 			if err != nil {
 				return nil, err
 			}
@@ -88,8 +89,8 @@ func LoadHelmConfig(config_path string, answer_path string, params map[string]st
 		if err != nil {
 			return nil, err
 		}
-	} else if lib.FileExists(config_path) {
-		data, err = lib.ReadFileToString(config_path)
+	} else if file.FileExists(config_path) {
+		data, err = file.ReadFileToString(config_path)
 		if err != nil {
 			return nil, err
 		}
