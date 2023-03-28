@@ -7,11 +7,11 @@ import (
 	"path"
 	"strings"
 
-	"github.com/Mrpye/golib/lib"
+	"github.com/Mrpye/go_k8_helm"
+	"github.com/Mrpye/golib/encrypt"
 	_ "github.com/Mrpye/helm-api/docs"
 	"github.com/Mrpye/helm-api/modules/body_types"
 	"github.com/Mrpye/helm-api/modules/git"
-	"github.com/Mrpye/helm-api/modules/k8_helm"
 	"github.com/Mrpye/helm-api/modules/template"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -54,7 +54,7 @@ func remapConfig(config_file string) string {
 // @Produce json
 // @Param request body body_types.GetPayload.request true true "query params"
 // @Success 200 {object}  body_types.InstallUpgradeRequest.response
-// @Failure 404 {string}  string "error"
+// @Failure 400 {string}  string "error"
 // @Router /get_config [post]
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -97,7 +97,7 @@ func postGetConfig(c *gin.Context) {
 // @Produce json
 // @Param request body body_types.GetPayload.request true true "query params"
 // @Success 200 {object}  body_types.InstallUpgradeRequest.response
-// @Failure 404 {string}  string "error"
+// @Failure 400 {object}  body_types.InstallUpgradeRequest.response
 // @Router /get_config_install [post]
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -132,21 +132,29 @@ func postGetConfigInstall(c *gin.Context) {
 	//*******************
 	//Perform the install
 	//*******************
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
+	if err != nil {
+		obj.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, obj)
+		return
+	}
 
 	//****************
 	//parse the config
 	//****************
 	config, err := template.ParseInterfaceMap(*obj, obj.Config)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		obj.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, obj)
 		return
 	}
 	err = helm.DeployHelmChart(obj.Chart, obj.ReleaseName, obj.Namespace, config)
 
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		obj.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, obj)
 	} else {
+		obj.Result = "success"
 		c.IndentedJSON(http.StatusCreated, obj)
 	}
 
@@ -156,8 +164,8 @@ func postGetConfigInstall(c *gin.Context) {
 // @ID get-helm-chart-config-upgrade
 // @Produce json
 // @Param request body body_types.GetPayload.request true true "query params"
-// @Success 200 {string}  string "chart installed"
-// @Failure 404 {string}  string "error"
+// @Success 200 {object}  body_types.InstallUpgradeRequest.response
+// @Failure 400 {object}  body_types.InstallUpgradeRequest.response
 // @Router /get_config_upgrade [post]
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -192,21 +200,28 @@ func postGetConfigUpgrade(c *gin.Context) {
 	//*******************
 	//Perform the install
 	//*******************
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
-
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
+	if err != nil {
+		obj.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, obj)
+		return
+	}
 	//****************
 	//parse the config
 	//****************
 	config, err := template.ParseInterfaceMap(*obj, obj.Config)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		obj.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, obj)
 		return
 	}
 	err = helm.UpgradeHelmChart(obj.Chart, obj.ReleaseName, obj.Namespace, config)
 
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		obj.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, obj)
 	} else {
+		obj.Result = "success"
 		c.IndentedJSON(http.StatusCreated, obj)
 	}
 
@@ -217,7 +232,7 @@ func postGetConfigUpgrade(c *gin.Context) {
 // @Produce json
 // @Param request body body_types.ImportChartRepo.request true "query params"
 // @Success 200 {string}  string "charts Repo Added"
-// @Failure 404 {string}  string "error"
+// @Failure 400 {string}  string "error"
 // @Router /add_repo [post]
 func postAddRepo(c *gin.Context) {
 	var importRequest body_types.ImportChartRepo
@@ -231,14 +246,22 @@ func postAddRepo(c *gin.Context) {
 	password := ""
 	if val, ok := c.Request.Header["Authorization"]; ok {
 		token := strings.Split(val[0], " ")[1]
-		dec := lib.Base64DecString(token)
+		dec, err := encrypt.Base64DecString(token)
+		if err != nil {
+			c.IndentedJSON(http.StatusBadRequest, err.Error())
+			return
+		}
 		parts := strings.Split(dec, ":")
 
 		user = parts[0]
 		password = parts[1]
 	}
 
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	if importRequest.Repo != "" {
 		err := helm.RepoAdd(importRequest.RepoName, importRequest.Repo, user, password)
 		if err != nil {
@@ -262,8 +285,8 @@ func postAddRepo(c *gin.Context) {
 // @ID install-helm-chart
 // @Produce json
 // @Param request body body_types.InstallUpgradeRequest.request true "query params"
-// @Success 200 {string}  string "chart installed"
-// @Failure 404 {string}  string "error"
+// @Success 200 {object}  body_types.InstallUpgradeRequest.response
+// @Failure 400 {object}  body_types.InstallUpgradeRequest.response
 // @Router /install [post]
 func postInstall(c *gin.Context) {
 	var importRequest body_types.InstallUpgradeRequest
@@ -274,22 +297,28 @@ func postInstall(c *gin.Context) {
 		return
 	}
 
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
-
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	//****************
 	//parse the config
 	//****************
 	config, err := template.ParseInterfaceMap(importRequest, importRequest.Config)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		importRequest.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, importRequest)
 		return
 	}
 	err = helm.DeployHelmChart(importRequest.Chart, importRequest.ReleaseName, importRequest.Namespace, config)
 
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		importRequest.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, importRequest)
 	} else {
-		c.IndentedJSON(http.StatusCreated, importRequest.ReleaseName+" Installed")
+		importRequest.Result = "success"
+		c.IndentedJSON(http.StatusCreated, importRequest)
 	}
 
 }
@@ -298,8 +327,8 @@ func postInstall(c *gin.Context) {
 // @ID upgrade-helm-chart
 // @Produce json
 // @Param request body body_types.InstallUpgradeRequest.request true "query params"
-// @Success 200 {string}  string "chart upgraded"
-// @Failure 404 {string}  string "error"
+// @Success 200 {object}  body_types.InstallUpgradeRequest.response
+// @Failure 400 {object}  body_types.InstallUpgradeRequest.response
 // @Router /upgrade [post]
 func postUpgrade(c *gin.Context) {
 	var importRequest body_types.InstallUpgradeRequest
@@ -310,14 +339,18 @@ func postUpgrade(c *gin.Context) {
 		return
 	}
 
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
-
-	err := helm.UpgradeHelmChart(importRequest.Chart, importRequest.ReleaseName, importRequest.Namespace, importRequest.Config)
-
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	err = helm.UpgradeHelmChart(importRequest.Chart, importRequest.ReleaseName, importRequest.Namespace, importRequest.Config)
+	if err != nil {
+		importRequest.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, importRequest)
 	} else {
-		c.IndentedJSON(http.StatusCreated, importRequest.ReleaseName+" Installed")
+		importRequest.Result = "success"
+		c.IndentedJSON(http.StatusCreated, importRequest)
 	}
 
 }
@@ -326,8 +359,8 @@ func postUpgrade(c *gin.Context) {
 // @ID uninstall-helm-chart
 // @Produce json
 // @Param request body body_types.UninstallChartRepo.request true "query params"
-// @Success 200 {string}  string "chart uninstalled"
-// @Failure 404 {string}  string "error"
+// @Success 200 {object} body_types.InstallUpgradeRequest.response
+// @Failure 400 {object} body_types.InstallUpgradeRequest.response
 // @Router /uninstall [post]
 func postUninstall(c *gin.Context) {
 	var importRequest body_types.UninstallChartRepo
@@ -338,12 +371,18 @@ func postUninstall(c *gin.Context) {
 		return
 	}
 
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
-	err := helm.UninstallHelmChart(importRequest.ReleaseName, importRequest.Namespace)
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	err = helm.UninstallHelmChart(importRequest.ReleaseName, importRequest.Namespace)
+	if err != nil {
+		importRequest.Result = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, importRequest)
 	} else {
-		c.IndentedJSON(http.StatusCreated, importRequest.ReleaseName+" Uninstalled")
+		importRequest.Result = "success"
+		c.IndentedJSON(http.StatusCreated, importRequest)
 	}
 }
 
@@ -352,7 +391,7 @@ func postUninstall(c *gin.Context) {
 // @Produce json
 // @Param request body body_types.NamespaceChartRepo.request true "query params"
 // @Success 200 {string}  string "namespace created"
-// @Failure 404 {string}  string "error"
+// @Failure 400 {string}  string "error"
 // @Router /create_ns [post]
 func postCreateNS(c *gin.Context) {
 	var importRequest body_types.NamespaceChartRepo
@@ -363,8 +402,12 @@ func postCreateNS(c *gin.Context) {
 		return
 	}
 
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
-	err := helm.CreateNS(importRequest.Namespace)
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	err = helm.CreateNS(importRequest.Namespace)
 	if err != nil {
 		if !strings.Contains(err.Error(), "cannot create default name space") {
 			c.IndentedJSON(http.StatusBadRequest, err.Error())
@@ -379,7 +422,7 @@ func postCreateNS(c *gin.Context) {
 // @Produce json
 // @Param request body body_types.GetServiceIP.request true "query params"
 // @Success 200 {object}  []body_types.ServiceDetails.response
-// @Failure 404 {string}  string "error"
+// @Failure 400 {string}  string "error"
 // @Router /get_ip [post]
 func postGetServiceIP(c *gin.Context) {
 	var importRequest body_types.GetServiceIP
@@ -389,7 +432,11 @@ func postGetServiceIP(c *gin.Context) {
 		return
 	}
 
-	helm := k8_helm.CreateK8(web_default_context, web_config_path)
+	helm, err := go_k8_helm.CreateK8KubeConfig(web_default_context, web_config_path)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, err.Error())
+		return
+	}
 	results, err := helm.GetServiceIP(importRequest.Namespace, importRequest.ReleaseName)
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err.Error())
@@ -459,6 +506,7 @@ func StartWebServer(ip string, port string, default_context string, config_path 
 	//****************
 	//Start the server
 	//****************
-	router.Run(web_ip + ":" + web_port)
+	fmt.Printf("Web-Server started %s:%s", web_ip, web_port)
+	router.Run(fmt.Sprintf("%s:%s", web_ip, web_port))
 
 }

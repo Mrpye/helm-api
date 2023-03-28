@@ -5,7 +5,10 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Mrpye/golib/lib"
+	"github.com/Mrpye/golib/encrypt"
+	"github.com/Mrpye/golib/math"
+	"github.com/Mrpye/golib/str"
+
 	"github.com/Mrpye/helm-api/modules/body_types"
 )
 
@@ -32,25 +35,25 @@ func ParseTemplate(model body_types.InstallUpgradeRequest, tpl string) (string, 
 	//Create a function map
 	//*********************
 	funcMap := template.FuncMap{
-		"base64enc":   lib.Base64EncString,
-		"base64dec":   lib.Base64DecString,
-		"gzip_base64": lib.GzipBase64String,
+		"base64enc":   encrypt.Base64EncString,
+		"base64dec":   encrypt.Base64DecString,
+		"gzip_base64": str.GzipBase64,
 		"lc":          strings.ToLower,
 		"uc":          strings.ToUpper,
-		"domain":      lib.GetDomainOrIP,
-		"port":        lib.GetPortString,
-		"port_int":    lib.GetPortInt,
-		"clean":       lib.Clean,
-		"concat":      lib.Concat,
+		"domain":      str.GetDomainOrIP,
+		"port":        str.GetPortString,
+		"port_int":    str.GetPortInt,
+		"clean":       str.Clean,
+		"concat":      str.Concat,
 		"replace":     strings.ReplaceAll,
-		"contains":    lib.CommaListContainsString,
-		"not":         lib.NOT,
-		"or":          lib.OR,
-		"and":         lib.AND,
-		"plus":        lib.Plus,
-		"minus":       lib.Minus,
-		"multiply":    lib.Multiply,
-		"divide":      lib.Divide,
+		"contains":    str.CommaListContainsString,
+		"not":         math.NOT,
+		"or":          math.OR,
+		"and":         math.AND,
+		"plus":        math.Plus,
+		"minus":       math.Minus,
+		"multiply":    math.Multiply,
+		"divide":      math.Divide,
 	}
 
 	//*****************
