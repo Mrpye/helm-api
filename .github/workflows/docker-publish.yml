@@ -40,10 +40,9 @@ jobs:
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
-        if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6 #v2.6.0
+        uses: sigstore/cosign-installer@main
         with:
-          cosign-release: 'v1.11.0'
+          cosign-release: 'v2.0.0' # optional
 
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
@@ -94,3 +93,12 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
       #  run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+      - name: Sign the published Docker image
+        run: |
+          cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${TAGS}@${DIGEST}
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+          COSIGN_PRIVATE_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+          
